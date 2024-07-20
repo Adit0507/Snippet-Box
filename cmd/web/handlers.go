@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"text/template"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +15,27 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Hello from SnippetBox"))
+	files := []string{
+		"./ui/html/base.tmpl",
+		"./ui/html/pages/home.tmpl",
+		"./ui/html/partials/nav.templ",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal server error", 500)
+
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base",nil)
+	if err != nil {
+		log.Print(err.Error())
+
+		http.Error(w, "Internal server error", 500)
+	}
+
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {
@@ -32,9 +54,9 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	
+
 		return
-		}	
+	}
 
 	w.Write([]byte("Create a new snippet..."))
 }
