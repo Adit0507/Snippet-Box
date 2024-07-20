@@ -25,26 +25,11 @@ func main() {
 		infoLog: infoLog,
 	}
 
-
-	mux := http.NewServeMux()
-
-	// file server serves files out of the "./ui/static/" directory.
-	fileServer := http.FileServer(http.Dir("./ui/static"))
-
-	// mux.Handle() registers the file server as the file handler for all
-	// URL paths that start with "/static". For matching paths, we strip
-	// "/static" prefix before the request reaches the file server.
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
-
 	// new http.Server struct
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.routes(),	//app.routes() method to get the servemux
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
