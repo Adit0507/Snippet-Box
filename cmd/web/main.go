@@ -6,19 +6,21 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"github.com/Adit0507/Snippet-Box/internal/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	// allows us to make the SnippetModel object available to the handlers
+	snippets *models.SnippetModel
 }
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-
 	// command line flag for the data source
-	dsn := flag.String("dsn","web:pass@/snippetbox?parseTime=true" ,"MySQL data source name")
+	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
 
 	flag.Parse()
 
@@ -35,6 +37,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// new http.Server struct
@@ -49,13 +52,13 @@ func main() {
 	errorLog.Fatal(err)
 }
 
-func openDB(dsn string) (*sql.DB, error){
+func openDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = db.Ping(); err !=nil {
+	if err = db.Ping(); err != nil {
 		return nil, err
 	}
 
