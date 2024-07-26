@@ -3,14 +3,24 @@ package main
 import (
 	"html/template"
 	"path/filepath"
+	"time"
 
 	"github.com/Adit0507/Snippet-Box/internal/models"
 )
 
 type templateData struct {
-	Snippet *models.Snippet
+	CurrentYear int
+	Snippet     *models.Snippet
 	// field for holding a slice of snippets
 	Snippets []*models.Snippet
+}
+
+func humanDate(t time.Time) string{
+	return t.Format("02 Jan 2024 at 15:04")
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
@@ -30,7 +40,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		// it to name variable
 		name := filepath.Base(page)
 
-		ts, err := template.ParseFiles("./ui/html/base.tmpl")
+		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl")
 		if err != nil {
 			return nil, err
 		}
