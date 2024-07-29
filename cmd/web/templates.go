@@ -13,6 +13,7 @@ type templateData struct {
 	Snippet     *models.Snippet
 	// field for holding a slice of snippets
 	Snippets []*models.Snippet
+	Form     any
 }
 
 func humanDate(t time.Time) string{
