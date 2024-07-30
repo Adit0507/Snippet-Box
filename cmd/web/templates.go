@@ -14,9 +14,10 @@ type templateData struct {
 	// field for holding a slice of snippets
 	Snippets []*models.Snippet
 	Form     any
+	Flash    string
 }
 
-func humanDate(t time.Time) string{
+func humanDate(t time.Time) string {
 	return t.Format("02 Jan 2024 at 15:04")
 }
 
